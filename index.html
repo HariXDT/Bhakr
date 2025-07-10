@@ -1,694 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESP32 Bluetooth Counter</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            max-width: 600px;
-            width: 100%;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .status-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(240, 240, 240, 0.7);
-            border-radius: 15px;
-            border-left: 5px solid #667eea;
-        }
-
-        .status-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .status-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-
-        .status-label {
-            font-weight: 600;
-            color: #555;
-        }
-
-        .status-value {
-            font-weight: 700;
-            color: #333;
-            font-size: 1.1em;
-        }
-
-        .counter-display {
-            font-size: 4em;
-            font-weight: bold;
-            color: #667eea;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .connection-status {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .connected {
-            background: #4CAF50;
-            color: white;
-            animation: pulse 2s infinite;
-        }
-
-        .disconnected {
-            background: #f44336;
-            color: white;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .btn {
-            padding: 15px 25px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-success {
-            background: linear-gradient(45deg, #4CAF50, #45a049);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(45deg, #f44336, #e53935);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(45deg, #ff9800, #f57c00);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .date-input {
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1em;
-            margin-right: 10px;
-            flex: 1;
-        }
-
-        .date-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .date-section {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .history-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(240, 240, 240, 0.7);
-            border-radius: 15px;
-            border-left: 5px solid #764ba2;
-        }
-
-        .history-item {
-            padding: 15px;
-            margin-bottom: 10px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .history-date {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .history-count {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: #667eea;
-        }
-
-        .log-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(240, 240, 240, 0.7);
-            border-radius: 15px;
-            border-left: 5px solid #ff9800;
-        }
-
-        .log-container {
-            max-height: 300px;
-            overflow-y: auto;
-            background: #1a1a1a;
-            color: #00ff00;
-            padding: 15px;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            line-height: 1.4;
-        }
-
-        .log-entry {
-            margin-bottom: 5px;
-            white-space: pre-wrap;
-        }
-
-        .log-timestamp {
-            color: #888;
-            font-size: 0.8em;
-        }
-
-        .error-message {
-            background: #ffebee;
-            color: #c62828;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ffcdd2;
-        }
-
-        .success-message {
-            background: #e8f5e8;
-            color: #2e7d32;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #c8e6c9;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-
-            .controls {
-                grid-template-columns: 1fr;
-            }
-
-            .counter-display {
-                font-size: 3em;
-            }
-
-            h1 {
-                font-size: 2em;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Counter & Money Tracker</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>ESP32 Bluetooth Counter</h1>
-        
-        <div class="status-section">
-            <div class="status-item">
-                <span class="status-label">Connection Status:</span>
-                <span class="connection-status disconnected" id="connectionStatus">Disconnected</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">Current Counter:</span>
-                <span class="status-value counter-display" id="counterValue">0</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">Current Date:</span>
-                <span class="status-value" id="currentDate">--</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">Last Stored Date:</span>
-                <span class="status-value" id="lastStoredDate">--</span>
-            </div>
-            <div class="status-item">
-                <span class="status-label">Button State:</span>
-                <span class="status-value" id="buttonState">--</span>
-            </div>
-        </div>
+  <div class="container">
+    <h1>Counter & Money Tracker</h1>
 
-        <div class="controls">
-            <button class="btn btn-primary" id="connectBtn">Connect Device</button>
-            <button class="btn btn-success" id="refreshBtn" disabled>Refresh Status</button>
-            <button class="btn btn-danger" id="resetBtn" disabled>Reset Counter</button>
-            <button class="btn btn-warning" id="disconnectBtn" disabled>Disconnect</button>
-        </div>
-
-        <div class="date-section">
-            <input type="date" class="date-input" id="dateInput" disabled>
-            <button class="btn btn-primary" id="setDateBtn" disabled>Set Date</button>
-        </div>
-
-        <div class="history-section">
-            <h3>Counter History</h3>
-            <div id="historyContainer">
-                <p>No history available. Connect to device to view history.</p>
-            </div>
-        </div>
-
-        <div class="log-section">
-            <h3>Activity Log</h3>
-            <div class="log-container" id="logContainer">
-                <div class="log-entry">
-                    <span class="log-timestamp">[System]</span> Web app started. Ready to connect to ESP32.
-                </div>
-            </div>
-        </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="counter">Counter</button>
+      <button class="tab" data-tab="money">Money</button>
     </div>
 
-    <script>
-        class ESP32BluetoothController {
-            constructor() {
-                this.device = null;
-                this.characteristic = null;
-                this.isConnected = false;
-                this.history = [];
-                this.currentStatus = {};
-                
-                this.initializeElements();
-                this.setupEventListeners();
-                this.setCurrentDate();
-                this.log('System initialized');
-            }
+    <!-- Counter Tab -->
+    <div class="tab-content active" id="counter">
+      <div class="status-section">
+        <div class="status-item">
+          <span class="status-label">Current Counter:</span>
+          <span class="status-value counter-display" id="counterValue">0</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Current Date:</span>
+          <span class="status-value" id="currentDate">--</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Last Updated:</span>
+          <span class="status-value" id="lastUpdated">--</span>
+        </div>
+      </div>
 
-            initializeElements() {
-                this.connectBtn = document.getElementById('connectBtn');
-                this.refreshBtn = document.getElementById('refreshBtn');
-                this.resetBtn = document.getElementById('resetBtn');
-                this.disconnectBtn = document.getElementById('disconnectBtn');
-                this.setDateBtn = document.getElementById('setDateBtn');
-                this.dateInput = document.getElementById('dateInput');
-                
-                this.connectionStatus = document.getElementById('connectionStatus');
-                this.counterValue = document.getElementById('counterValue');
-                this.currentDate = document.getElementById('currentDate');
-                this.lastStoredDate = document.getElementById('lastStoredDate');
-                this.buttonState = document.getElementById('buttonState');
-                
-                this.historyContainer = document.getElementById('historyContainer');
-                this.logContainer = document.getElementById('logContainer');
-            }
+      <div class="controls">
+        <button class="btn btn-success" id="saveCountBtn">Save Count</button>
+      </div>
 
-            setupEventListeners() {
-                this.connectBtn.addEventListener('click', () => this.connectDevice());
-                this.refreshBtn.addEventListener('click', () => this.refreshStatus());
-                this.resetBtn.addEventListener('click', () => this.resetCounter());
-                this.disconnectBtn.addEventListener('click', () => this.disconnectDevice());
-                this.setDateBtn.addEventListener('click', () => this.setDate());
-            }
+      <div class="input-group">
+        <input type="date" class="input-field" id="dateInput">
+        <button class="btn btn-primary" id="setDateBtn">Set Date</button>
+      </div>
 
-            setCurrentDate() {
-                const today = new Date().toISOString().split('T')[0];
-                this.dateInput.value = today;
-            }
+      <div class="history-section">
+        <h3>Counter History</h3>
+        <div id="counterHistoryContainer">
+          <p>No history available. Start counting to see history.</p>
+        </div>
+      </div>
+    </div>
 
-            async connectDevice() {
-                try {
-                    this.log('Attempting to connect to ESP32...');
-                    
-                    // Request device
-                    this.device = await navigator.bluetooth.requestDevice({
-                        filters: [{ name: 'ESP32_Counter' }],
-                        optionalServices: ['0000ffe0-0000-1000-8000-00805f9b34fb']
-                    });
+    <!-- Money Tab -->
+    <div class="tab-content" id="money">
+      <div class="status-section">
+        <div class="status-item">
+          <span class="status-label">Total Amount:</span>
+          <span class="status-value money-display" id="totalAmount">$0.00</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Transaction Count:</span>
+          <span class="status-value" id="transactionCount">0</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Average Amount:</span>
+          <span class="status-value" id="averageAmount">$0.00</span>
+        </div>
+      </div>
 
-                    this.log('Device selected: ' + this.device.name);
+      <div class="input-group">
+        <input type="number" class="input-field" id="amountInput" placeholder="Enter amount" step="0.01">
+        <input type="text" class="input-field" id="descriptionInput" placeholder="Description (optional)">
+        <button class="btn btn-success" id="addMoneyBtn">Add</button>
+      </div>
 
-                    // Connect to GATT server
-                    const server = await this.device.gatt.connect();
-                    this.log('Connected to GATT server');
+      <div class="controls">
+        <button class="btn btn-primary" id="quickAdd5">+$5</button>
+        <button class="btn btn-primary" id="quickAdd10">+$10</button>
+        <button class="btn btn-primary" id="quickAdd20">+$20</button>
+        <button class="btn btn-danger" id="clearMoneyBtn">Clear All</button>
+      </div>
 
-                    // Get service
-                    const service = await server.getPrimaryService('0000ffe0-0000-1000-8000-00805f9b34fb');
-                    this.log('Service found');
+      <div class="history-section">
+        <h3>Money History</h3>
+        <div id="moneyHistoryContainer">
+          <p>No transactions recorded yet.</p>
+        </div>
+      </div>
+    </div>
 
-                    // Get characteristic
-                    this.characteristic = await service.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb');
-                    this.log('Characteristic found');
+    <div class="log-section">
+      <h3>Activity Log</h3>
+      <div class="log-container" id="logContainer">
+        <div class="log-entry">
+          <span class="log-timestamp">[System]</span> App started. Ready to use.
+        </div>
+      </div>
+    </div>
+  </div>
 
-                    // Setup notifications
-                    await this.characteristic.startNotifications();
-                    this.characteristic.addEventListener('characteristicvaluechanged', (event) => {
-                        this.handleReceivedData(event);
-                    });
-
-                    this.device.addEventListener('gattserverdisconnected', () => {
-                        this.handleDisconnection();
-                    });
-
-                    this.isConnected = true;
-                    this.updateConnectionStatus(true);
-                    this.enableControls(true);
-                    
-                    this.log('Successfully connected to ESP32');
-                    
-                    // Request initial status
-                    setTimeout(() => this.refreshStatus(), 1000);
-
-                } catch (error) {
-                    this.log('Connection failed: ' + error.message);
-                    this.showError('Failed to connect: ' + error.message);
-                }
-            }
-
-            async disconnectDevice() {
-                if (this.device && this.device.gatt.connected) {
-                    await this.device.gatt.disconnect();
-                }
-                this.handleDisconnection();
-                this.log('Manually disconnected from device');
-            }
-
-            handleDisconnection() {
-                this.isConnected = false;
-                this.device = null;
-                this.characteristic = null;
-                this.updateConnectionStatus(false);
-                this.enableControls(false);
-                this.log('Disconnected from ESP32');
-            }
-
-            updateConnectionStatus(connected) {
-                const statusElement = this.connectionStatus;
-                if (connected) {
-                    statusElement.textContent = 'Connected';
-                    statusElement.className = 'connection-status connected';
-                } else {
-                    statusElement.textContent = 'Disconnected';
-                    statusElement.className = 'connection-status disconnected';
-                }
-            }
-
-            enableControls(enabled) {
-                this.refreshBtn.disabled = !enabled;
-                this.resetBtn.disabled = !enabled;
-                this.disconnectBtn.disabled = !enabled;
-                this.setDateBtn.disabled = !enabled;
-                this.dateInput.disabled = !enabled;
-                this.connectBtn.disabled = enabled;
-            }
-
-            async sendCommand(command) {
-                if (!this.isConnected || !this.characteristic) {
-                    this.showError('Device not connected');
-                    return;
-                }
-
-                try {
-                    const commandStr = JSON.stringify(command);
-                    const encoder = new TextEncoder();
-                    const data = encoder.encode(commandStr);
-                    
-                    await this.characteristic.writeValue(data);
-                    this.log('Sent command: ' + commandStr);
-                } catch (error) {
-                    this.log('Failed to send command: ' + error.message);
-                    this.showError('Failed to send command: ' + error.message);
-                }
-            }
-
-            handleReceivedData(event) {
-                const decoder = new TextDecoder();
-                const data = decoder.decode(event.target.value);
-                
-                this.log('Received: ' + data);
-                
-                try {
-                    const jsonData = JSON.parse(data);
-                    this.processReceivedData(jsonData);
-                } catch (error) {
-                    this.log('Failed to parse received data: ' + error.message);
-                }
-            }
-
-            processReceivedData(data) {
-                switch (data.type) {
-                    case 'status':
-                        this.updateStatus(data);
-                        break;
-                    case 'button_press':
-                        this.handleButtonPress(data);
-                        break;
-                    case 'final_count':
-                        this.handleFinalCount(data);
-                        break;
-                    case 'error':
-                        this.showError(data.message);
-                        break;
-                    case 'ack':
-                        this.log('ESP32: ' + data.message);
-                        break;
-                    default:
-                        this.log('Unknown data type: ' + data.type);
-                }
-            }
-
-            updateStatus(data) {
-                this.currentStatus = data;
-                this.counterValue.textContent = data.counter;
-                this.currentDate.textContent = data.current_date || '--';
-                this.lastStoredDate.textContent = data.last_stored_date || '--';
-                this.buttonState.textContent = data.button_state || '--';
-                
-                this.log('Status updated - Counter: ' + data.counter);
-            }
-
-            handleButtonPress(data) {
-                this.counterValue.textContent = data.counter;
-                this.log('Button pressed! New counter: ' + data.counter);
-                
-                // Add visual feedback
-                this.counterValue.style.transform = 'scale(1.2)';
-                this.counterValue.style.color = '#4CAF50';
-                
-                setTimeout(() => {
-                    this.counterValue.style.transform = 'scale(1)';
-                    this.counterValue.style.color = '#667eea';
-                }, 200);
-            }
-
-            handleFinalCount(data) {
-                this.addToHistory(data.date, data.final_count);
-                this.log('Final count for ' + data.date + ': ' + data.final_count);
-            }
-
-            addToHistory(date, count) {
-                // Check if date already exists in history
-                const existingIndex = this.history.findIndex(item => item.date === date);
-                
-                if (existingIndex !== -1) {
-                    // Update existing entry
-                    this.history[existingIndex].count = count;
-                } else {
-                    // Add new entry
-                    this.history.push({ date: date, count: count });
-                }
-                
-                // Sort history by date (newest first)
-                this.history.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                this.updateHistoryDisplay();
-            }
-
-            updateHistoryDisplay() {
-                if (this.history.length === 0) {
-                    this.historyContainer.innerHTML = '<p>No history available.</p>';
-                    return;
-                }
-
-                let historyHTML = '';
-                this.history.forEach(item => {
-                    historyHTML += `
-                        <div class="history-item">
-                            <span class="history-date">${item.date}</span>
-                            <span class="history-count">${item.count}</span>
-                        </div>
-                    `;
-                });
-
-                this.historyContainer.innerHTML = historyHTML;
-            }
-
-            async refreshStatus() {
-                await this.sendCommand({ action: 'get_status' });
-            }
-
-            async resetCounter() {
-                if (confirm('Are you sure you want to reset the counter to 0?')) {
-                    await this.sendCommand({ action: 'reset_counter' });
-                }
-            }
-
-            async setDate() {
-                const selectedDate = this.dateInput.value;
-                if (!selectedDate) {
-                    this.showError('Please select a date');
-                    return;
-                }
-
-                await this.sendCommand({ 
-                    action: 'set_date', 
-                    date: selectedDate 
-                });
-            }
-
-            showError(message) {
-                this.log('ERROR: ' + message);
-                
-                // Create error message div
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'error-message';
-                errorDiv.textContent = message;
-                
-                // Insert at the top of the container
-                const container = document.querySelector('.container');
-                container.insertBefore(errorDiv, container.firstChild);
-                
-                // Remove after 5 seconds
-                setTimeout(() => {
-                    if (errorDiv.parentNode) {
-                        errorDiv.parentNode.removeChild(errorDiv);
-                    }
-                }, 5000);
-            }
-
-            showSuccess(message) {
-                this.log('SUCCESS: ' + message);
-                
-                // Create success message div
-                const successDiv = document.createElement('div');
-                successDiv.className = 'success-message';
-                successDiv.textContent = message;
-                
-                // Insert at the top of the container
-                const container = document.querySelector('.container');
-                container.insertBefore(successDiv, container.firstChild);
-                
-                // Remove after 3 seconds
-                setTimeout(() => {
-                    if (successDiv.parentNode) {
-                        successDiv.parentNode.removeChild(successDiv);
-                    }
-                }, 3000);
-            }
-
-            log(message) {
-                const timestamp = new Date().toLocaleTimeString();
-                const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
-                
-                logEntry.innerHTML = `
-                    <span class="log-timestamp">[${timestamp}]</span> ${message}
-                `;
-                
-                this.logContainer.appendChild(logEntry);
-                this.logContainer.scrollTop = this.logContainer.scrollHeight;
-                
-                // Keep only last 100 log entries
-                const logEntries = this.logContainer.querySelectorAll('.log-entry');
-                if (logEntries.length > 100) {
-                    logEntries[0].remove();
-                }
-            }
-        }
-
-        // Initialize the app when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if Web Bluetooth is supported
-            if (!navigator.bluetooth) {
-                alert('Web Bluetooth is not supported in this browser. Please use Chrome, Edge, or other compatible browsers.');
-                return;
-            }
-            
-            new ESP32BluetoothController();
-        });
-
-        // Handle page visibility changes
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                console.log('Page hidden');
-            } else {
-                console.log('Page visible');
-            }
-        });
-    </script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
