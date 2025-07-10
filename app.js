@@ -25,7 +25,11 @@ onValue(dataRef1, (snapshot) => {
     const humi = snapshot.val();
     document.getElementById('Cvalue').innerHTML = humi;
 });
-  
+
+onValue(dataRef1, (snapshot) => {
+    const humi = snapshot.val();
+    document.getElementById('transactionCount').innerHTML = humi;
+});
 
 class CounterMoneyApp {
   constructor() {
