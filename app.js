@@ -19,6 +19,13 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
+const dataRef1 = ref(database, 'daily_counter/current/count');
+
+onValue(dataRef1, (snapshot) => {
+    const humi = snapshot.val();
+    document.getElementById('Cvalue').innerHTML = humi;
+});
+  
 
 class CounterMoneyApp {
   constructor() {
