@@ -1,102 +1,479 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Counter & Money Tracker</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter & Activity Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 10px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: rgba(255,255,255,0.8);
+            position: relative;
+        }
+
+        .tab:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .tab.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .tab-content {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            min-height: calc(100vh - 200px);
+        }
+
+        .counter-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .counter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .counter-grid-extended {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .counter-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 15px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .counter-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .counter-card h3 {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .counter-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .counter-label {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .income-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .total-card {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .date-card {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            grid-column: 1 / -1;
+        }
+
+        .monthly-gross-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .date-card .counter-value {
+            font-size: 1.8rem;
+        }
+
+        .activity-log {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-log h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .log-entry {
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .log-entry:hover {
+            transform: translateX(3px);
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .log-time {
+            background: #667eea;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .log-type {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .log-type.increment {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .log-type.reset {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .log-type.update {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .log-message {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Scrollbar styling */
+        .activity-log::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .activity-log::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .activity-log::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .activity-log::-webkit-scrollbar-thumb:hover {
+            background: #5a67d8;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 480px) {
+            .container {
+                padding: 8px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .tab {
+                padding: 12px 8px;
+                font-size: 0.9rem;
+            }
+
+            .tab-content {
+                padding: 15px;
+            }
+
+            .counter-grid {
+                gap: 10px;
+            }
+
+            .counter-card {
+                padding: 15px 10px;
+            }
+
+            .counter-value {
+                font-size: 1.8rem;
+            }
+
+            .counter-card h3 {
+                font-size: 0.8rem;
+            }
+
+            .counter-label {
+                font-size: 0.7rem;
+            }
+
+            .log-entry {
+                padding: 10px;
+            }
+
+            .log-message {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 320px) {
+            .counter-value {
+                font-size: 1.6rem;
+            }
+
+            .date-card .counter-value {
+                font-size: 1.4rem;
+            }
+
+            .tab {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Counter & Money Tracker</h1>
+    <div class="container">
+        <div class="header">
+            <h1>Counter & Activity Tracker</h1>
+            <p>Track your progress and view activity logs</p>
+        </div>
 
-    <div class="tabs">
-      <button class="tab active" data-tab="counter">Counter</button>
-      <button class="tab" data-tab="money">Money</button>
+        <div class="tabs">
+            <div class="tab active" data-tab="counter">📊 Counter</div>
+            <div class="tab" data-tab="activity">📝 Activity Log</div>
+        </div>
+
+        <div class="tab-content">
+            <div id="counter" class="tab-pane">
+                <div class="counter-section">
+                    <div class="counter-grid">
+                        <div class="counter-card">
+                            <h3>Current Count</h3>
+                            <div class="counter-value" id="counter-value">000</div>
+                            <div class="counter-label">Today Count</div>
+                        </div>
+                        
+                        <div class="counter-card income-card">
+                            <h3>Income</h3>
+                            <div class="counter-value" id="Income-value">0000r</div>
+                            <div class="counter-label">This Month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="counter-grid-extended">
+                        <div class="counter-card total-card">
+                            <h3>Total Count</h3>
+                            <div class="counter-value" id="Tincome">15,832</div>
+                            <div class="counter-label">All Time</div>
+                        </div>
+                        
+                        <div class="counter-card monthly-gross-card">
+                            <h3>Monthly Gross</h3>
+                            <div class="counter-value" id="GCrpss">----</div>
+                            <div class="counter-label">Before Tax</div>
+                        </div>
+                    </div>
+                    
+                    <div class="counter-card date-card">
+                        <h3>Last Updated</h3>
+                        <div class="counter-value">July 11, 2025</div>
+                        <div class="counter-label">Recent Activity</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="activity" class="tab-pane hidden">
+                <div class="activity-log">
+                    <h3>Recent Activity</h3>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-time">14:30</div>
+                            <div class="log-type increment">Increment</div>
+                        </div>
+                        <div class="log-message">Counter increased by 15 items - New total: 247</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-time">13:15</div>
+                            <div class="log-type increment">Increment</div>
+                        </div>
+                        <div class="log-message">Counter increased by 8 items - New total: 232</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-time">12:45</div>
+                            <div class="log-type update">Update</div>
+                        </div>
+                        <div class="log-message">Income updated from $2,380 to $2,450</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-time">11:30</div>
+                            <div class="log-type increment">Increment</div>
+                        </div>
+                        <div class="log-message">Counter increased by 22 items - New total: 224</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-time">10:20</div>
+                            <div class="log-type reset">Reset</div>
+                        </div>
+                        <div class="log-message">Daily count reset performed - Counter set to 202</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-time">09:45</div>
+                            <div class="log-type increment">Increment</div>
+                        </div>
+                        <div class="log-message">Counter increased by 31 items - New total: 201</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-time">08:30</div>
+                            <div class="log-type update">Update</div>
+                        </div>
+                        <div class="log-message">System initialized - Starting count: 170</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-time">07:15</div>
+                            <div class="log-type increment">Increment</div>
+                        </div>
+                        <div class="log-message">Counter increased by 45 items - New total: 170</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-time">06:00</div>
+                            <div class="log-type update">Update</div>
+                        </div>
+                        <div class="log-message">Daily backup completed - Total count: 15,832</div>
+                    </div>
+                    
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-time">05:30</div>
+                            <div class="log-type increment">Increment</div>
+                        </div>
+                        <div class="log-message">Counter increased by 12 items - New total: 125</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- Counter Tab -->
-    <div class="tab-content active" id="counter">
-      <div class="status-section">
-        <div class="status-item">
-          <span class="status-label">Current Counter:</span>
-          <span class="status-value counter-display" id="Cvalue">0</span>
-        </div>
-        <div class="status-item">
-          <span class="status-label">Current Date:</span>
-          <span class="status-value" id="currentDate">--</span>
-        </div>
-        <div class="status-item">
-          <span class="status-label">Last Updated:</span>
-          <span class="status-value" id="lastUpdated">--</span>
-        </div>
-      </div>
-
-      <div class="controls">
-        <button class="btn btn-success" id="saveCountBtn">Save Count</button>
-      </div>
-
-      <div class="input-group">
-        <input type="date" class="input-field" id="dateInput">
-        <button class="btn btn-primary" id="setDateBtn">Set Date</button>
-      </div>
-
-      <div class="history-section">
-        <h3>Counter History</h3>
-        <div id="counterHistoryContainer">
-          <p>No history available. Start counting to see history.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Money Tab -->
-    <div class="tab-content" id="money">
-      <div class="status-section">
-        <div class="status-item">
-          <span class="status-label">Total Amount:</span>
-          <span class="status-value money-display" id="totalAmount">$0.00</span>
-        </div>
-        <div class="status-item">
-          <span class="status-label">Transaction Count:</span>
-          <span class="status-value" id="transactionCount">0</span>
-        </div>
-        <div class="status-item">
-          <span class="status-label">Average Amount:</span>
-          <span class="status-value" id="averageAmount">$0.00</span>
-        </div>
-      </div>
-
-      <div class="input-group">
-        <input type="number" class="input-field" id="amountInput" placeholder="Enter amount" step="0.01">
-        <input type="text" class="input-field" id="descriptionInput" placeholder="Description (optional)">
-        <button class="btn btn-success" id="addMoneyBtn">Add</button>
-      </div>
-
-      <div class="controls">
-        <button class="btn btn-primary" id="quickAdd5">+$5</button>
-        <button class="btn btn-primary" id="quickAdd10">+$10</button>
-        <button class="btn btn-primary" id="quickAdd20">+$20</button>
-        <button class="btn btn-danger" id="clearMoneyBtn">Clear All</button>
-      </div>
-
-      <div class="history-section">
-        <h3>Money History</h3>
-        <div id="moneyHistoryContainer">
-          <p>No transactions recorded yet.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="log-section">
-      <h3>Activity Log</h3>
-      <div class="log-container" id="logContainer">
-        <div class="log-entry">
-          <span class="log-timestamp">[System]</span> App started. Ready to use.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script type="module" src="app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
