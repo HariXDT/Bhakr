@@ -114,7 +114,7 @@
 
         .counter-grid-extended {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 12px;
             margin-bottom: 12px;
         }
@@ -160,17 +160,21 @@
             background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
         }
 
+        .after-hours-card {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        }
+
         .date-card {
             background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             grid-column: 1 / -1;
         }
 
-        .monthly-gross-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
         .date-card .counter-value {
             font-size: 1.8rem;
+        }
+
+        .monthly-gross-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .activity-log {
@@ -226,16 +230,6 @@
             font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
-        }
-
-        .log-type.increment {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .log-type.reset {
-            background: #f8d7da;
-            color: #721c24;
         }
 
         .log-type.update {
@@ -295,6 +289,10 @@
                 gap: 10px;
             }
 
+            .counter-grid-extended {
+                grid-template-columns: 1fr 1fr;
+            }
+
             .counter-card {
                 padding: 15px 10px;
             }
@@ -309,6 +307,10 @@
 
             .counter-label {
                 font-size: 0.7rem;
+            }
+
+            .date-card .counter-value {
+                font-size: 1.4rem;
             }
 
             .log-entry {
@@ -327,7 +329,7 @@
             }
 
             .date-card .counter-value {
-                font-size: 1.4rem;
+                font-size: 1.2rem;
             }
 
             .tab {
@@ -360,7 +362,7 @@
                         
                         <div class="counter-card income-card">
                             <h3>Income</h3>
-                            <div class="counter-value" id="Income-value">0000r</div>
+                            <div class="counter-value" id="income-value">0000r</div>
                             <div class="counter-label">This Month</div>
                         </div>
                     </div>
@@ -368,21 +370,27 @@
                     <div class="counter-grid-extended">
                         <div class="counter-card total-card">
                             <h3>Total Count</h3>
-                            <div class="counter-value" id="Tincome">15,832</div>
+                            <div class="counter-value" id="total-count">15,832</div>
                             <div class="counter-label">All Time</div>
+                        </div>
+                        
+                        <div class="counter-card after-hours-card">
+                            <h3>After Hours</h3>
+                            <div class="counter-value" id="after-hours-count">0</div>
+                            <div class="counter-label">Extra Count</div>
                         </div>
                         
                         <div class="counter-card monthly-gross-card">
                             <h3>Monthly Gross</h3>
-                            <div class="counter-value" id="GCrpss">----</div>
+                            <div class="counter-value" id="monthly-gross">----</div>
                             <div class="counter-label">Before Tax</div>
                         </div>
                     </div>
                     
                     <div class="counter-card date-card">
-                        <h3>Last Updated</h3>
-                        <div class="counter-value">July 11, 2025</div>
-                        <div class="counter-label">Recent Activity</div>
+                        <h3>Current Date</h3>
+                        <div class="counter-value" id="current-date">Loading...</div>
+                        <div class="counter-label">Today's Date</div>
                     </div>
                 </div>
             </div>
@@ -390,90 +398,283 @@
             <div id="activity" class="tab-pane hidden">
                 <div class="activity-log">
                     <h3>Recent Activity</h3>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-time">14:30</div>
-                            <div class="log-type increment">Increment</div>
+                    <div id="activity-list">
+                        <div class="log-entry">
+                            <div class="log-header">
+                                <div class="log-time">System</div>
+                                <div class="log-type update">Init</div>
+                            </div>
+                            <div class="log-message">System initialized - Ready to track</div>
                         </div>
-                        <div class="log-message">Counter increased by 15 items - New total: 247</div>
-                    </div>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-time">13:15</div>
-                            <div class="log-type increment">Increment</div>
-                        </div>
-                        <div class="log-message">Counter increased by 8 items - New total: 232</div>
-                    </div>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-time">12:45</div>
-                            <div class="log-type update">Update</div>
-                        </div>
-                        <div class="log-message">Income updated from $2,380 to $2,450</div>
-                    </div>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-time">11:30</div>
-                            <div class="log-type increment">Increment</div>
-                        </div>
-                        <div class="log-message">Counter increased by 22 items - New total: 224</div>
-                    </div>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-time">10:20</div>
-                            <div class="log-type reset">Reset</div>
-                        </div>
-                        <div class="log-message">Daily count reset performed - Counter set to 202</div>
-                    </div>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-time">09:45</div>
-                            <div class="log-type increment">Increment</div>
-                        </div>
-                        <div class="log-message">Counter increased by 31 items - New total: 201</div>
-                    </div>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-time">08:30</div>
-                            <div class="log-type update">Update</div>
-                        </div>
-                        <div class="log-message">System initialized - Starting count: 170</div>
-                    </div>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-time">07:15</div>
-                            <div class="log-type increment">Increment</div>
-                        </div>
-                        <div class="log-message">Counter increased by 45 items - New total: 170</div>
-                    </div>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-time">06:00</div>
-                            <div class="log-type update">Update</div>
-                        </div>
-                        <div class="log-message">Daily backup completed - Total count: 15,832</div>
-                    </div>
-                    
-                    <div class="log-entry">
-                        <div class="log-header">
-                            <div class="log-time">05:30</div>
-                            <div class="log-type increment">Increment</div>
-                        </div>
-                        <div class="log-message">Counter increased by 12 items - New total: 125</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <script type="module" src="app.js"></script>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+        import { getDatabase, ref, onValue, push, set } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+        // Firebase configuration - Replace with your actual config
+      const firebaseConfig = {
+        apiKey: "AIzaSyCdNfFMtD6ZzLhGnM1dS2dcSp5cSs48Zko",
+        databaseURL: "https://counter-af2ec-default-rtdb.asia-southeast1.firebasedatabase.app",
+        authDomain: "counter-af2ec.firebaseapp.com",
+        projectId: "counter-af2ec",
+        storageBucket: "counter-af2ec.firebasestorage.app",
+        messagingSenderId: "65958989193",
+        appId: "1:65958989193:web:1d21e12c1843326bede558",
+        measurementId: "G-0L44XCFK5F"
+};
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        class CounterTracker {
+            constructor() {
+                this.currentCount = 0;
+                this.totalCount = 1;
+                this.afterHoursCount = 0;
+                this.income = 0;
+                this.monthlyGross = 0;
+                this.activityLog = [];
+                this.lastResetDate = this.getTodayDate();
+                this.dailyTotals = {}; // Store daily totals for the month
+                
+                this.initializeElements();
+                this.initializeEventListeners();
+                this.initializeFirebase();
+                this.updateDisplay();
+                this.startDateTimeUpdater();
+                this.checkForDailyReset();
+                this.addLogEntry('init', 'System initialized with Firebase connection');
+            }
+            
+            initializeElements() {
+                this.elements = {
+                    counterValue: document.getElementById('counter-value'),
+                    totalCount: document.getElementById('total-count'),
+                    afterHoursCount: document.getElementById('after-hours-count'),
+                    incomeValue: document.getElementById('income-value'),
+                    monthlyGross: document.getElementById('monthly-gross'),
+                    currentDate: document.getElementById('current-date'),
+                    activityList: document.getElementById('activity-list')
+                };
+            }
+            
+            initializeEventListeners() {
+                // Tab switching
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => this.switchTab(e));
+                });
+            }
+
+            initializeFirebase() {
+                // Listen to Firebase data changes
+                const deviceRef = ref(database, 'devices/counter_device_01');
+                onValue(deviceRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data && data.currentData) {
+                        this.updateFromFirebase(data.currentData);
+                    }
+                });
+
+                // Listen to daily totals
+                const dailyTotalsRef = ref(database, 'dailyTotals');
+                onValue(dailyTotalsRef, (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        this.dailyTotals = data;
+                        this.calculateMonthlyTotals();
+                        this.updateDisplay();
+                    }
+                });
+            }
+
+            updateFromFirebase(data) {
+                const newCount = data.count || 0;
+                
+                if (newCount !== this.currentCount) {
+                    this.currentCount = newCount;
+                    this.income = this.currentCount * 15; // Income = current count * 15
+                    
+                    this.addLogEntry('update', `Count updated from Firebase: ${this.currentCount}, Income: ${this.income}r`);
+                    this.updateDisplay();
+                }
+            }
+
+            calculateMonthlyTotals() {
+                const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM format
+                let monthlyTotal = 0;
+
+                // Sum all daily totals for current month
+                for (const [date, total] of Object.entries(this.dailyTotals)) {
+                    if (date.startsWith(currentMonth)) {
+                        monthlyTotal += total;
+                    }
+                }
+
+                this.totalCount = 0 + monthlyTotal; // Add to base total
+                this.monthlyGross = this.totalCount * 15; // Gross = total count * 15
+            }
+
+            async pushDailyTotal() {
+                const today = this.getTodayDate();
+                
+                if (this.currentCount > 0) {
+                    try {
+                        // Push daily total to Firebase
+                        const dailyTotalRef = ref(database, `dailyTotals/${today}`);
+                        await set(dailyTotalRef, this.currentCount);
+                        
+                        this.addLogEntry('update', `Daily total pushed to Firebase: ${this.currentCount} for ${today}`);
+                        
+                        // Reset current count for new day
+                        this.currentCount = 0;
+                        this.income = 0;
+                        this.afterHoursCount = 0;
+                        
+                        this.updateDisplay();
+                        this.addLogEntry('update', 'Daily reset completed - New day started');
+                    } catch (error) {
+                        this.addLogEntry('update', `Error pushing daily total: ${error.message}`);
+                    }
+                }
+            }
+
+            checkForDailyReset() {
+                const now = new Date();
+                const currentDate = this.getTodayDate();
+                
+                // Check if we need to reset (new day)
+                if (this.lastResetDate !== currentDate) {
+                    this.pushDailyTotal();
+                    this.lastResetDate = currentDate;
+                }
+
+                // Schedule next check at midnight
+                const msUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) - now;
+                
+                setTimeout(() => {
+                    this.checkForDailyReset();
+                    // Then check every 24 hours
+                    setInterval(() => {
+                        this.checkForDailyReset();
+                    }, 24 * 60 * 60 * 1000);
+                }, msUntilMidnight);
+            }
+
+            getTodayDate() {
+                return new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+            }
+            
+            switchTab(e) {
+                const targetTab = e.target.getAttribute('data-tab');
+                
+                // Update tab appearance
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                e.target.classList.add('active');
+                
+                // Show/hide content
+                document.querySelectorAll('.tab-pane').forEach(pane => {
+                    pane.classList.add('hidden');
+                });
+                document.getElementById(targetTab).classList.remove('hidden');
+            }
+            
+            startDateTimeUpdater() {
+                this.updateDateTime();
+                // Update date at midnight (once per day)
+                const now = new Date();
+                const msUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) - now;
+                
+                setTimeout(() => {
+                    this.updateDateTime();
+                    // Then update every 24 hours
+                    setInterval(() => {
+                        this.updateDateTime();
+                    }, 24 * 60 * 60 * 1000);
+                }, msUntilMidnight);
+            }
+            
+            updateDateTime() {
+                const now = new Date();
+                
+                // Format date
+                const dateString = now.toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                
+                this.elements.currentDate.textContent = dateString;
+            }
+            
+            updateDisplay() {
+                this.elements.counterValue.textContent = this.currentCount.toString().padStart(3, '0');
+                this.elements.totalCount.textContent = this.totalCount.toLocaleString();
+                this.elements.afterHoursCount.textContent = this.afterHoursCount.toString();
+                this.elements.incomeValue.textContent = this.income + 'r';
+                this.elements.monthlyGross.textContent = this.monthlyGross > 0 ? '$' + this.monthlyGross.toLocaleString() : '----';
+            }
+            
+            addLogEntry(type, message) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                });
+                
+                const entry = {
+                    time: timeString,
+                    type: type,
+                    message: message,
+                    timestamp: now
+                };
+                
+                this.activityLog.unshift(entry);
+                
+                // Keep only last 50 entries
+                if (this.activityLog.length > 50) {
+                    this.activityLog = this.activityLog.slice(0, 50);
+                }
+                
+                this.updateActivityDisplay();
+            }
+            
+            updateActivityDisplay() {
+                const activityHtml = this.activityLog.map(entry => `
+                    <div class="log-entry">
+                        <div class="log-header">
+                            <div class="log-time">${entry.time}</div>
+                            <div class="log-type ${entry.type}">${this.getTypeLabel(entry.type)}</div>
+                        </div>
+                        <div class="log-message">${entry.message}</div>
+                    </div>
+                `).join('');
+                
+                this.elements.activityList.innerHTML = activityHtml;
+            }
+            
+            getTypeLabel(type) {
+                const labels = {
+                    'update': 'Update',
+                    'init': 'Init'
+                };
+                return labels[type] || 'Unknown';
+            }
+        }
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            window.counterTracker = new CounterTracker();
+        });
+    </script>
 </body>
 </html>
